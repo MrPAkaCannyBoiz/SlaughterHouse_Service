@@ -1,0 +1,130 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.example.slaughterhouseService";
+option java_outer_classname = "ServiceProto";
+package com.example.slaughterhouseService;
+import "google/protobuf/timestamp.proto";
+
+message Animal
+{
+  int32 id = 1;
+  double weight = 2;
+  string type = 3;
+  google.protobuf.Timestamp arrival_time = 4;
+  string origin = 5;
+}
+
+message AnimalType
+{
+  int32 id = 1;
+  string name = 2;
+}
+
+message Part
+{
+  int32 id = 1;
+  int32 animal_id = 2;
+  double weight = 3;
+  int32 tray_id = 4;
+  int32 part_type_id = 5;
+}
+
+message PartType
+{
+  int32 id = 1;
+  string name = 2;
+}
+
+message Product {
+  int32 id = 1;
+  int32 tray_id_1 = 2;
+  int32 tray_id_2 = 3;
+  double total_weight = 4;
+}
+
+
+message Tray
+{
+  int32 max_weight = 1;
+  int32 id = 2;
+  repeated Part parts = 3;
+  Animal animal = 4;
+  Part part = 5;
+  int32 current_weight = 6;
+}
+
+// ---- Request(parameter) and Response(return) Messages for station 1 ----
+message RegisterAnimalRequest
+{
+  // considering animal_type_id and weight as parameters to register an animal
+  // instead of sending whole Animal object (better client perspective)
+  int32 animal_type_id = 1;
+  double weight = 2;
+  string origin = 3;
+}
+
+message RegisterAnimalResponse
+{
+  Animal animal = 1;
+}
+
+// ---- Request(parameter) and Response(return) Messages for station 2 ----
+message CutRequest
+{
+  // client would not input whole animal object, just the id is enough
+  int32 animal_id = 1;
+}
+
+message CutResponse
+{
+  repeated Part parts = 1;
+}
+
+
+// ---- Request(parameter) and Response(return) Messages for station 3 ----
+message PackSingleProductRequest
+{
+  int32 tray_id = 1;
+}
+
+message PackSingleProductResponse
+{
+  Product product = 1;
+}
+
+message PackHalfAnimalRequest
+{
+  int32 tray_id_1 = 1;
+  int32 tray_id_2 = 2;
+}
+
+message PackHalfAnimalResponse
+{
+  Product product = 1;
+}
+
+// ---- Service Definition ----
+
+service StationOneService
+{
+  rpc RegisterAnimal (RegisterAnimalRequest)
+      returns (RegisterAnimalResponse);
+}
+
+service StationTwoService
+{
+  rpc Cut (CutRequest)
+      returns (CutResponse);
+}
+
+
+service StationThreeService
+{
+  rpc PackSingleProduct (PackSingleProductRequest)
+      returns (PackSingleProductResponse);
+  rpc PackHalfAnimal (PackHalfAnimalRequest)
+      returns (PackHalfAnimalResponse);
+}
+
+
+
