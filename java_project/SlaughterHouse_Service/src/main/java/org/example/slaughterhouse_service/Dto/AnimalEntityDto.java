@@ -1,4 +1,4 @@
-package org.example.slaughterhouse_service.entities;
+package org.example.slaughterhouse_service.Dto;
 
 import java.time.LocalDate;
 

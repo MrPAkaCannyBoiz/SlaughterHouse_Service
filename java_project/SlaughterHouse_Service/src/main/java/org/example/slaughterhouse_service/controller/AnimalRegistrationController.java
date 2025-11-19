@@ -1,12 +1,14 @@
 package org.example.slaughterhouse_service.controller;
 
+import org.example.slaughterhouse_service.Dto.AnimalRegisterDto;
 import org.example.slaughterhouse_service.entities.AnimalEntity;
-import org.example.slaughterhouse_service.entities.AnimalEntityDto;
+import org.example.slaughterhouse_service.Dto.AnimalEntityDto;
+import org.example.slaughterhouse_service.entities.AnimalTypeEntity;
+import org.example.slaughterhouse_service.service.grpc.StationOneImplClient;
+import org.example.slaughterhouse_service.service.repositories.AnimalTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import org.example.slaughterhouse_service.service.repositories.AnimalRepository;
 
 import java.time.LocalDate;
@@ -17,18 +19,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/animal")
 public class AnimalRegistrationController
 {
-    private AnimalRepository animalRepository;
+    private AnimalRepository animalRepository; // have to be delete if you want REST as gRPC gateway
+
+    private AnimalTypeRepository animalTypeRepository;
+    private StationOneImplClient stationOneImplClient;
 
     @Autowired
-    public AnimalRegistrationController(AnimalRepository animalRepository)
+    public AnimalRegistrationController(AnimalRepository animalRepository, AnimalTypeRepository animalTypeRepository, StationOneImplClient stationOneImplClient)
     {
         this.animalRepository = animalRepository;
+        this.animalTypeRepository = animalTypeRepository;
+        this.stationOneImplClient = stationOneImplClient;
     }
 
-    @PostMapping("/register")
-    public void registerAnimal(AnimalEntity animal)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void registerAnimal(@RequestBody AnimalRegisterDto dto)
     {
-        animalRepository.save(animal);
+        //stationOneImplClient.registerAnimal(dto.getAnimalTypeId(), dto.getWeight(), dto.getOrigin());
+        // make entity for DB
+        AnimalTypeEntity animalTypeEntity = animalTypeRepository.findById(dto.getAnimalTypeId()).orElse(null);
+        AnimalEntity animalEntity = new AnimalEntity(animalTypeEntity, dto.getWeight(), dto.getOrigin());
+        animalRepository.save(animalEntity);
+        System.out.println("Received registration request: " + dto);
     }
 
     @GetMapping("/test")
