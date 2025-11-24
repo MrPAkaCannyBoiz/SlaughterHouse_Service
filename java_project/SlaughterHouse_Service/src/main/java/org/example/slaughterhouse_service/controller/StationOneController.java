@@ -1,9 +1,9 @@
 package org.example.slaughterhouse_service.controller;
 
+import com.example.slaughterhouseService.Animal;
 import org.example.slaughterhouse_service.Dto.AnimalRegisterDto;
 import org.example.slaughterhouse_service.entities.AnimalEntity;
 import org.example.slaughterhouse_service.Dto.AnimalEntityDto;
-import org.example.slaughterhouse_service.entities.AnimalTypeEntity;
 import org.example.slaughterhouse_service.service.grpc.StationOneImplClient;
 import org.example.slaughterhouse_service.service.repositories.AnimalTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import org.example.slaughterhouse_service.service.repositories.AnimalRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/animal")
-public class AnimalRegistrationController
+public class StationOneController
 {
     private AnimalRepository animalRepository; // have to be delete if you want REST as gRPC gateway
 
@@ -25,7 +26,7 @@ public class AnimalRegistrationController
     private StationOneImplClient stationOneImplClient;
 
     @Autowired
-    public AnimalRegistrationController(AnimalRepository animalRepository, AnimalTypeRepository animalTypeRepository, StationOneImplClient stationOneImplClient)
+    public StationOneController(AnimalRepository animalRepository, AnimalTypeRepository animalTypeRepository, StationOneImplClient stationOneImplClient)
     {
         this.animalRepository = animalRepository;
         this.animalTypeRepository = animalTypeRepository;
@@ -33,14 +34,12 @@ public class AnimalRegistrationController
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void registerAnimal(@RequestBody AnimalRegisterDto dto)
+    public AnimalEntityDto registerAnimal(@RequestBody AnimalRegisterDto dto)
     {
-        //stationOneImplClient.registerAnimal(dto.getAnimalTypeId(), dto.getWeight(), dto.getOrigin());
-        // make entity for DB
-        AnimalTypeEntity animalTypeEntity = animalTypeRepository.findById(dto.getAnimalTypeId()).orElse(null);
-        AnimalEntity animalEntity = new AnimalEntity(animalTypeEntity, dto.getWeight(), dto.getOrigin());
-        animalRepository.save(animalEntity);
+        Animal animalGrpc = stationOneImplClient
+                .registerAnimal(dto.getAnimalTypeId(), dto.getWeight(), dto.getOrigin());
         System.out.println("Received registration request: " + dto);
+        return toDto(animalGrpc);
     }
 
     @GetMapping("/test")
@@ -53,18 +52,20 @@ public class AnimalRegistrationController
     @GetMapping
     public List<AnimalEntityDto> getAllAnimals()
     {
-        return animalRepository.findAll()
-                .stream() // create a stream from the list, enabling functional operations.
-                .map(this::toDto) // convert each AnimalEntity to AnimalEntityDto
-                .collect(Collectors.toList()); // collect results into a new list
+        List<Animal> animalsGrpc = stationOneImplClient.getAllAnimals();
+        List<AnimalEntityDto> dtoList = new ArrayList<>();
+        for (Animal a : animalsGrpc)
+        {
+            dtoList.add(toDto(a));
+        }
+        return dtoList;
     }
 
-    @GetMapping("/id")
-    public AnimalEntityDto getAnimalById(Integer id)
+    @GetMapping("/{id}")
+    public AnimalEntityDto getAnimalById(@PathVariable Integer id)
     {
-        return animalRepository.findById(id)
-                .map(this::toDto)
-                .orElse(null);
+       Animal animalGrpc = stationOneImplClient.getAnimal(id);
+       return toDto(animalGrpc);
     }
 
     @GetMapping("/typeId")
@@ -104,6 +105,19 @@ public class AnimalRegistrationController
                 animalEntity.getArrivalDate(),
                 animalEntity.getOrigin(),
                 animalEntity.isAlive()
+        );
+        return dto;
+    }
+
+    private AnimalEntityDto toDto(Animal animalGrpc)
+    {
+        AnimalEntityDto dto = new AnimalEntityDto(
+                animalGrpc.getId(),
+                animalGrpc.getAnimalTypeId(),
+                animalGrpc.getWeight(),
+                LocalDate.now(), // arrivalDate is not available in gRPC response
+                animalGrpc.getOrigin(),
+                animalGrpc.getIsAlive()
         );
         return dto;
     }

@@ -9,9 +9,10 @@ message Animal
 {
   int32 id = 1;
   double weight = 2;
-  string type = 3;
-  google.protobuf.Timestamp arrival_time = 4;
-  string origin = 5;
+  int32 animal_type_id = 3;
+  bool is_alive = 4;
+  google.protobuf.Timestamp arrival_time = 5;
+  string origin = 6;
 }
 
 message AnimalType
@@ -53,6 +54,8 @@ message Tray
   int32 current_weight = 6;
 }
 
+message Empty {}
+
 // ---- Request(parameter) and Response(return) Messages for station 1 ----
 message RegisterAnimalRequest
 {
@@ -66,6 +69,26 @@ message RegisterAnimalRequest
 message RegisterAnimalResponse
 {
   Animal animal = 1;
+}
+
+message GetAnimalByIdRequest
+{
+  int32 animal_id = 1;
+}
+
+message GetAnimalByIdResponse
+{
+  Animal animal = 1;
+}
+
+message GetAllAnimalsRequest
+{
+  Empty empty = 1;
+}
+
+message GetAllAnimalsResponse
+{
+  repeated Animal animals = 1;
 }
 
 // ---- Request(parameter) and Response(return) Messages for station 2 ----
@@ -109,6 +132,10 @@ service StationOneService
 {
   rpc RegisterAnimal (RegisterAnimalRequest)
       returns (RegisterAnimalResponse);
+  rpc GetAnimalById (GetAnimalByIdRequest)
+      returns (GetAnimalByIdResponse);
+  rpc GetAllAnimals (GetAllAnimalsRequest)
+      returns (GetAllAnimalsResponse);
 }
 
 service StationTwoService

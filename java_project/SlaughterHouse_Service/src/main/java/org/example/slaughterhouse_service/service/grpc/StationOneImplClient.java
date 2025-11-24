@@ -1,11 +1,11 @@
 package org.example.slaughterhouse_service.service.grpc;
 
+import com.example.slaughterhouseService.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.example.slaughterhouse_service.generated.RegisterAnimalRequest;
-import org.example.slaughterhouse_service.generated.RegisterAnimalResponse;
-import org.example.slaughterhouse_service.generated.StationOneServiceGrpc;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class StationOneImplClient
@@ -20,14 +20,31 @@ public class StationOneImplClient
         this.stationOneStub = StationOneServiceGrpc.newBlockingStub(channel);
     }
 
-    public String registerAnimal(int animalTypeId, double weight, String origin) //parameter is message of type RegisterAnimalRequest in proto file
+    public Animal registerAnimal(int animalTypeId, double weight, String origin) //parameter is message of type RegisterAnimalRequest in proto file
     {
         RegisterAnimalRequest request = RegisterAnimalRequest.newBuilder()
                 .setAnimalTypeId(animalTypeId)
                 .setWeight(weight)
                 .setOrigin(origin)
                 .build();
-        RegisterAnimalResponse response = this.stationOneStub.registerAnimal(request);
-        return response.toString();
+        RegisterAnimalResponse response = stationOneStub.registerAnimal(request);
+        return response.getAnimal();
+    }
+
+    public Animal getAnimal(int animalTypeId)
+    {
+        GetAnimalByIdRequest request = GetAnimalByIdRequest.newBuilder()
+                .setAnimalId(animalTypeId)
+                .build();
+        GetAnimalByIdResponse response = this.stationOneStub.getAnimalById(request);
+        return response.getAnimal();
+    }
+
+    public List<Animal> getAllAnimals()
+    {
+        GetAllAnimalsRequest request = GetAllAnimalsRequest.newBuilder()
+                .build();
+        GetAllAnimalsResponse response = this.stationOneStub.getAllAnimals(request);
+        return response.getAnimalsList();
     }
 }

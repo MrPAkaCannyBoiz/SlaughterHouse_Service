@@ -1,9 +1,9 @@
 package org.example.slaughterhouse_service.service.grpc;
 
+import com.example.slaughterhouseService.*;
 import org.example.slaughterhouse_service.entities.ProductEntity;
 //import generated.*;
 import io.grpc.stub.StreamObserver;
-import org.example.slaughterhouse_service.generated.*;
 import org.example.slaughterhouse_service.service.repositories.ProductRepository;
 import org.example.slaughterhouse_service.service.repositories.TrayRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,11 +1,11 @@
 package org.example.slaughterhouse_service.service.grpc;
 
+import com.example.slaughterhouseService.CutRequest;
+import com.example.slaughterhouseService.CutResponse;
+import com.example.slaughterhouseService.Part;
+import com.example.slaughterhouseService.StationTwoServiceGrpc;
 import org.example.slaughterhouse_service.entities.PartEntity;
 import org.example.slaughterhouse_service.entities.TrayEntity;
-import org.example.slaughterhouse_service.generated.CutRequest;
-import org.example.slaughterhouse_service.generated.CutResponse;
-import org.example.slaughterhouse_service.generated.Part;
-import org.example.slaughterhouse_service.generated.StationTwoServiceGrpc;
 import io.grpc.stub.StreamObserver;
 import org.example.slaughterhouse_service.service.repositories.AnimalRepository;
 import org.example.slaughterhouse_service.service.repositories.PartTypeRepository;
