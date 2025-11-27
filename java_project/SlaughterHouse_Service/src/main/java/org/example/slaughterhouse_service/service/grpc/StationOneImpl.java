@@ -1,6 +1,5 @@
 package org.example.slaughterhouse_service.service.grpc;
 
-import com.example.slaughterhouseService.*;
 import com.google.protobuf.Timestamp;
 import org.example.slaughterhouse_service.entities.AnimalEntity;
 import org.example.slaughterhouse_service.entities.AnimalTypeEntity;
@@ -20,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplBase
+public class StationOneImpl extends com.example.slaughterhouseService.StationOneServiceGrpc.StationOneServiceImplBase
 {
     private final AnimalRepository animalRepository;
     private final AnimalTypeRepository animalTypeRepository;
@@ -33,8 +32,9 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
     }
 
 
-    public void registerAnimal(RegisterAnimalRequest request,
-                               StreamObserver<RegisterAnimalResponse> responseObserver)
+    public void registerAnimal(
+        com.example.slaughterhouseService.RegisterAnimalRequest request,
+                               StreamObserver<com.example.slaughterhouseService.RegisterAnimalResponse> responseObserver)
     {
         // make entity for DB
         AnimalTypeEntity animalTypeEntity = animalTypeRepository.findById(request.getAnimalTypeId()).orElse(null);
@@ -48,7 +48,7 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
         LocalDate arrivalDate = saved.getArrivalDate();
         Timestamp arrivalTimestamp = convertLocalDateToTimestamp(arrivalDate);
 
-        Animal animalDto = Animal.newBuilder()
+        com.example.slaughterhouseService.Animal animalDto = com.example.slaughterhouseService.Animal.newBuilder()
                 .setId(saved.getId())
                 .setWeight(saved.getWeight())
                 .setAnimalTypeId(saved.getAnimalType().getId())
@@ -56,14 +56,15 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
                 .setOrigin(saved.getOrigin())
                 .build();
 
-        RegisterAnimalResponse response = RegisterAnimalResponse.newBuilder()
+        com.example.slaughterhouseService.RegisterAnimalResponse response = com.example.slaughterhouseService.RegisterAnimalResponse.newBuilder()
                 .setAnimal(animalDto).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
-    public void getAnimalById(GetAnimalByIdRequest request,
-                              StreamObserver<GetAnimalByIdResponse> responseObserver)
+    public void getAnimalById(
+        com.example.slaughterhouseService.GetAnimalByIdRequest request,
+                              StreamObserver<com.example.slaughterhouseService.GetAnimalByIdResponse> responseObserver)
     {
         // find animal in DB
         var animal = animalRepository.findById(request.getAnimalId()).orElse(null);
@@ -79,7 +80,7 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
             LocalDate arrivalDate = animal.getArrivalDate();
             Timestamp arrivalTimestamp = convertLocalDateToTimestamp(arrivalDate);
 
-            Animal animalDto = Animal.newBuilder()
+            com.example.slaughterhouseService.Animal animalDto = com.example.slaughterhouseService.Animal.newBuilder()
                     .setId(animal.getId())
                     .setWeight(animal.getWeight())
                     .setAnimalTypeId(animal.getAnimalType().getId())
@@ -87,19 +88,20 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
                     .setOrigin(animal.getOrigin())
                     .build();
 
-            GetAnimalByIdResponse response = GetAnimalByIdResponse.newBuilder()
+            com.example.slaughterhouseService.GetAnimalByIdResponse response = com.example.slaughterhouseService.GetAnimalByIdResponse.newBuilder()
                     .setAnimal(animalDto).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }
     }
 
-    public void getAllAnimals(GetAllAnimalsRequest request,
-                              StreamObserver<GetAllAnimalsResponse> responseObserver)
+    public void getAllAnimals(
+        com.example.slaughterhouseService.GetAllAnimalsRequest request,
+                              StreamObserver<com.example.slaughterhouseService.GetAllAnimalsResponse> responseObserver)
     {
-        List<Animal> animals = animalRepository.findAll()
+        List<com.example.slaughterhouseService.Animal> animals = animalRepository.findAll()
                         .stream()
-                                .map(animalEntity -> Animal.newBuilder()
+                                .map(animalEntity -> com.example.slaughterhouseService.Animal.newBuilder()
                                         .setId(animalEntity.getId())
                                         .setWeight(animalEntity.getWeight())
                                         .setAnimalTypeId(animalEntity.getAnimalType().getId())
@@ -109,7 +111,7 @@ public class StationOneImpl extends StationOneServiceGrpc.StationOneServiceImplB
                                         .setOrigin(animalEntity.getOrigin())
                                         .build())
                                 .toList();
-        GetAllAnimalsResponse response = GetAllAnimalsResponse.newBuilder()
+        com.example.slaughterhouseService.GetAllAnimalsResponse response = com.example.slaughterhouseService.GetAllAnimalsResponse.newBuilder()
                 .addAllAnimals(animals)
                 .build();
         responseObserver.onNext(response);

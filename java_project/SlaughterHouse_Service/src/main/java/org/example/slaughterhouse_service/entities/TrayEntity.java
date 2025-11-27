@@ -86,6 +86,14 @@ public class TrayEntity
         this.partEntity = partEntity;
     }
 
+  public void setMaxWeight(double maxWeight)
+  {
+    this.maxWeight = maxWeight;
+  }
 
+  public void setCurrentWeight(double currentWeight)
+  {
+    this.currentWeight = currentWeight;
+  }
 
 }

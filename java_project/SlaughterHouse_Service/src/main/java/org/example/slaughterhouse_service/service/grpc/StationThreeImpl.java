@@ -1,6 +1,5 @@
 package org.example.slaughterhouse_service.service.grpc;
 
-import com.example.slaughterhouseService.*;
 import org.example.slaughterhouse_service.entities.ProductEntity;
 //import generated.*;
 import io.grpc.stub.StreamObserver;
@@ -10,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StationThreeImpl extends StationThreeServiceGrpc.StationThreeServiceImplBase
+public class StationThreeImpl extends com.example.slaughterhouseService.StationThreeServiceGrpc.StationThreeServiceImplBase
 {
     private TrayRepository trayRepository;
     private ProductRepository productRepository;
@@ -22,8 +21,9 @@ public class StationThreeImpl extends StationThreeServiceGrpc.StationThreeServic
         this.productRepository = productRepository;
     }
 
-    public void packSingleProduct(PackSingleProductRequest request,
-                                  StreamObserver<PackSingleProductResponse> responseObserver)
+    public void packSingleProduct(
+        com.example.slaughterhouseService.PackSingleProductRequest request,
+                                  StreamObserver<com.example.slaughterhouseService.PackSingleProductResponse> responseObserver)
     {
         // find tray in DB
         var tray = trayRepository.findById(request.getTrayId()).orElse(null);
@@ -34,20 +34,21 @@ public class StationThreeImpl extends StationThreeServiceGrpc.StationThreeServic
         // save the product to the database
         productRepository.save(product);
         // make dto for response
-        Product productDto = Product.newBuilder()
+        com.example.slaughterhouseService.Product productDto = com.example.slaughterhouseService.Product.newBuilder()
                 .setId(product.getId())
                 .setTotalWeight(product.getTotalWeight())
                 .setTrayId1(product.getTray().getId())
                 .setTrayId2(-1) // no second tray
                 .build();
-        PackSingleProductResponse response = PackSingleProductResponse.newBuilder()
+        com.example.slaughterhouseService.PackSingleProductResponse response = com.example.slaughterhouseService.PackSingleProductResponse.newBuilder()
                 .setProduct(productDto).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
-    public void packHalfAnimal(PackHalfAnimalRequest request,
-                               StreamObserver<PackHalfAnimalResponse> responseObserver)
+    public void packHalfAnimal(
+        com.example.slaughterhouseService.PackHalfAnimalRequest request,
+                               StreamObserver<com.example.slaughterhouseService.PackHalfAnimalResponse> responseObserver)
     {
         // find trays in DB
         var trayEntity1 = trayRepository.findById(request.getTrayId1()).orElse(null);
@@ -61,13 +62,13 @@ public class StationThreeImpl extends StationThreeServiceGrpc.StationThreeServic
             // save the product to the database
             productRepository.save(product);
             // make dto for response
-            Product productDto = Product.newBuilder()
+            com.example.slaughterhouseService.Product productDto = com.example.slaughterhouseService.Product.newBuilder()
                     .setId(product.getId())
                     .setTotalWeight(product.getTotalWeight())
                     .setTrayId1(product.getTray().getId())
                     .setTrayId2(product.getTray2().getId())
                     .build();
-            PackHalfAnimalResponse response = PackHalfAnimalResponse.newBuilder()
+            com.example.slaughterhouseService.PackHalfAnimalResponse response = com.example.slaughterhouseService.PackHalfAnimalResponse.newBuilder()
                     .setProduct(productDto).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();

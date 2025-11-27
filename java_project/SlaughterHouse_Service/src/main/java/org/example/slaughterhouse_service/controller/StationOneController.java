@@ -1,6 +1,5 @@
 package org.example.slaughterhouse_service.controller;
 
-import com.example.slaughterhouseService.Animal;
 import org.example.slaughterhouse_service.Dto.AnimalRegisterDto;
 import org.example.slaughterhouse_service.entities.AnimalEntity;
 import org.example.slaughterhouse_service.Dto.AnimalEntityDto;
@@ -36,7 +35,7 @@ public class StationOneController
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public AnimalEntityDto registerAnimal(@RequestBody AnimalRegisterDto dto)
     {
-        Animal animalGrpc = stationOneImplClient
+        com.example.slaughterhouseService.Animal animalGrpc = stationOneImplClient
                 .registerAnimal(dto.getAnimalTypeId(), dto.getWeight(), dto.getOrigin());
         System.out.println("Received registration request: " + dto);
         return toDto(animalGrpc);
@@ -52,9 +51,9 @@ public class StationOneController
     @GetMapping
     public List<AnimalEntityDto> getAllAnimals()
     {
-        List<Animal> animalsGrpc = stationOneImplClient.getAllAnimals();
+        List<com.example.slaughterhouseService.Animal> animalsGrpc = stationOneImplClient.getAllAnimals();
         List<AnimalEntityDto> dtoList = new ArrayList<>();
-        for (Animal a : animalsGrpc)
+        for (com.example.slaughterhouseService.Animal a : animalsGrpc)
         {
             dtoList.add(toDto(a));
         }
@@ -64,7 +63,7 @@ public class StationOneController
     @GetMapping("/{id}")
     public AnimalEntityDto getAnimalById(@PathVariable Integer id)
     {
-       Animal animalGrpc = stationOneImplClient.getAnimal(id);
+       com.example.slaughterhouseService.Animal animalGrpc = stationOneImplClient.getAnimal(id);
        return toDto(animalGrpc);
     }
 
@@ -109,7 +108,8 @@ public class StationOneController
         return dto;
     }
 
-    private AnimalEntityDto toDto(Animal animalGrpc)
+    private AnimalEntityDto toDto(
+        com.example.slaughterhouseService.Animal animalGrpc)
     {
         AnimalEntityDto dto = new AnimalEntityDto(
                 animalGrpc.getId(),
