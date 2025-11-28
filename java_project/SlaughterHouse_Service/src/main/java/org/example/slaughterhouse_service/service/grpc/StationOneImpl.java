@@ -54,6 +54,7 @@ public class StationOneImpl extends com.example.slaughterhouseService.StationOne
                 .setAnimalTypeId(saved.getAnimalType().getId())
                 .setArrivalTime(arrivalTimestamp)
                 .setOrigin(saved.getOrigin())
+                .setIsAlive(saved.isAlive())
                 .build();
 
         com.example.slaughterhouseService.RegisterAnimalResponse response = com.example.slaughterhouseService.RegisterAnimalResponse.newBuilder()
@@ -86,6 +87,7 @@ public class StationOneImpl extends com.example.slaughterhouseService.StationOne
                     .setAnimalTypeId(animal.getAnimalType().getId())
                     .setArrivalTime(arrivalTimestamp)
                     .setOrigin(animal.getOrigin())
+                    .setIsAlive(animal.isAlive())
                     .build();
 
             com.example.slaughterhouseService.GetAnimalByIdResponse response = com.example.slaughterhouseService.GetAnimalByIdResponse.newBuilder()
@@ -109,6 +111,7 @@ public class StationOneImpl extends com.example.slaughterhouseService.StationOne
                                                 (convertLocalDateToTimestamp
                                                         (animalEntity.getArrivalDate()))
                                         .setOrigin(animalEntity.getOrigin())
+                                        .setIsAlive(animalEntity.isAlive())
                                         .build())
                                 .toList();
         com.example.slaughterhouseService.GetAllAnimalsResponse response = com.example.slaughterhouseService.GetAllAnimalsResponse.newBuilder()

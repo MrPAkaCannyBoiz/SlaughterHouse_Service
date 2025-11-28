@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/animal")
+@RequestMapping("/api/station-one")
 public class StationOneController
 {
     private AnimalRepository animalRepository; // have to be delete if you want REST as gRPC gateway

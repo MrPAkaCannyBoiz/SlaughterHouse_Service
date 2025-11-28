@@ -22,7 +22,7 @@ public class AnimalEntity
     private boolean isAlive = true;
 
 
-    @Column (name = "arrival_date" , nullable = false)
+    @Column (name = "arrival_timestamp" , nullable = false)
     private LocalDate arrivalDate = LocalDate.now();
 
     @Column (name = "origin" , nullable = false)
